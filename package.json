@@ -1,0 +1,25 @@
+{
+  "name": "poke-dnd",
+  "version": "1.0.0",
+  "description": "Testing react-beautiful-dnd with nextjs and pokemon apis",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Alessio Zappa",
+  "license": "ISC",
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "next": "^7.0.2",
+    "query-string": "^6.2.0",
+    "react": "^16.7.0",
+    "react-beautiful-dnd": "^10.0.3",
+    "react-dom": "^16.7.0",
+    "styled-components": "^4.1.3"
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.10.0"
+  }
+}
