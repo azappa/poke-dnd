@@ -19,6 +19,7 @@ export const DropAreas = styled.div`
   width: 300px;
   height: 300px;
   border: 4px dashed #ccc;
+  overflow-y: auto;
 `;
 
 

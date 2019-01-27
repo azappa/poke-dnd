@@ -23,11 +23,32 @@ const getPokeInfo = async (poke) => {
   try {
     const pokeInfoCall = await fetch(poke.url);
     const pokeInfo = await pokeInfoCall.json();
-    return { ...poke, pic: pokeInfo.sprites.front_default };
+    return { ...poke, pic: pokeInfo.sprites.front_default, pokeId: pokeInfo.id };
   } catch (err) {
     return poke;
   }
 }
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+const move = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+  destClone.splice(droppableDestination.index, 0, removed);
+
+  return {
+    list: sourceClone,
+    selected: destClone,
+  };
+};
 
 export default class extends PureComponent {
   static async getInitialProps({ req }) {
@@ -56,15 +77,36 @@ export default class extends PureComponent {
     super(props);
     this.state = {
       params: props.params,
+      list: props.pokelist,
+      selected: [],
     };
   }
 
-  onDragEnd = () => {
-    console.log(`onDragEnd called`);
+  onDragEnd = (dragResult) => {
+    const { source, destination } = dragResult;
+
+    if (!destination) {
+      return;
+    }
+
+    const { list, selected } = this.state;
+    const result = move(
+      list,
+      selected,
+      source,
+      destination
+    );
+    const { list: newList, selected: newSelected } = result;
+    
+    this.setState({
+      list: newList,
+      selected: newSelected,
+    });
+    
   }
 
   render() {
-    const { pokelist } = this.props;
+    const { list, selected } = this.state;
 
     return (
       <Wrapper>
@@ -75,8 +117,8 @@ export default class extends PureComponent {
             {(provided, snapshot) => (
               <Columns>
                 <List>
-                  {pokelist.map((p, index) => (
-                    <Draggable draggableId={`${p.name}`} index={index} key={p.name}>
+                  {list.map((p, index) => (
+                    <Draggable draggableId={`${p.name}-${p.id}`} index={index} key={p.name}>
                       {(provided, snapshot) => (
                         <PokeItemList
                           ref={provided.innerRef}
@@ -93,7 +135,14 @@ export default class extends PureComponent {
                 <DropAreas
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                />
+                >
+                  {selected.map(p => (
+                    <PokeItemList key={p.pokeId}>
+                      <PokeItemPic src={p.pic} />
+                      <PokeItemName>{p.name}</PokeItemName>
+                    </PokeItemList>
+                  ))}
+                </DropAreas>
               </Columns>
             )}
           </Droppable>
