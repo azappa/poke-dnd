@@ -1,7 +1,12 @@
 import React, { PureComponent } from 'react';
 import fetch from 'isomorphic-fetch';
 import { parseUrl } from 'query-string';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import {
+  Draggable,
+  Droppable,
+  DragDropContext,
+  resetServerContext,
+} from 'react-beautiful-dnd';
 import {
   Wrapper,
   Columns,
@@ -74,6 +79,7 @@ export default class extends PureComponent {
   }
 
   constructor(props) {
+    resetServerContext();
     super(props);
     this.state = {
       params: props.params,
